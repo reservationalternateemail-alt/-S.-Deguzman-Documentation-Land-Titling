@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S. De Guzman Documentation and Land Titling Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#1B2E2A;
+    --forest-2:#243F39;
+    --forest-3:#2F4A42;
+    --parchment:#FAF7F0;
+    --parchment-dim:#F0EBDD;
+    --bronze:#B8862E;
+    --bronze-bright:#D4A24E;
+    --bronze-dim:#8C6A23;
+    --ink:#1E2422;
+    --brown:#6B6155;
+    --brown-dim:#9A9082;
+    --tan:#D4C9A8;
+    --line:rgba(184,134,46,0.25);
+    --line-dark:rgba(250,247,240,0.12);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.65;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--bronze);color:var(--parchment);}
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+
+  h1,h2,h3,h4{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    letter-spacing:-0.2px;
+  }
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 5vw;}
+
+  .eyebrow{
+    font-size:0.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:var(--bronze-dim);display:flex;align-items:center;gap:12px;
+  }
+  .eyebrow::before{content:'';width:26px;height:1px;background:var(--bronze);}
+  .eyebrow.on-dark{color:var(--bronze-bright);}
+  .eyebrow.on-dark::before{background:var(--bronze-bright);}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s cubic-bezier(.16,.8,.3,1),transform 0.8s cubic-bezier(.16,.8,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ============ SEAL MOTIF (signature element) ============ */
+  .seal{
+    width:64px;height:64px;border-radius:50%;
+    border:1.5px solid var(--bronze);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;flex-shrink:0;
+  }
+  .seal::before{
+    content:'';position:absolute;inset:5px;border:1px solid var(--bronze);border-radius:50%;
+  }
+  .seal .seal-inner{
+    font-family:'Fraunces',serif;font-style:italic;font-size:0.7rem;
+    color:var(--bronze);text-align:center;line-height:1.1;
+  }
+
+  /* ============ NAV ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.3rem 5vw;
+    background:rgba(250,247,240,0.92);backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:border-color 0.3s, padding 0.3s, box-shadow 0.3s;
+  }
+  nav.scrolled{border-bottom-color:var(--line);box-shadow:0 4px 24px rgba(27,46,42,0.05);padding:0.9rem 5vw;}
+
+  .brand{display:flex;align-items:center;gap:0.8rem;text-decoration:none;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:50%;border:1.3px solid var(--bronze);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    font-family:'Fraunces',serif;font-style:italic;color:var(--bronze-dim);font-size:1.05rem;
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.15;}
+  .brand-text .name{font-family:'Fraunces',serif;font-weight:600;font-size:1.02rem;color:var(--forest);}
+  .brand-text .tag{font-size:0.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--brown);}
+
+  .nav-links{display:flex;gap:2.2rem;list-style:none;}
+  .nav-links a{
+    text-decoration:none;font-size:0.84rem;font-weight:500;color:var(--ink);opacity:0.75;
+    position:relative;padding-bottom:3px;transition:opacity 0.25s;
+  }
+  .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--bronze);transition:width 0.3s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-links a:hover::after{width:100%;}
+
+  .nav-cta{
+    background:var(--forest);color:var(--parchment);
+    padding:0.65rem 1.4rem;text-decoration:none;border-radius:3px;
+    font-size:0.8rem;font-weight:600;letter-spacing:0.3px;
+    transition:background 0.3s;
+  }
+  .nav-cta:hover{background:var(--bronze-dim);}
+
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:210;}
+  .hamburger span{width:24px;height:2px;background:var(--forest);transition:all 0.3s;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-menu{
+    position:fixed;inset:0;background:var(--parchment);z-index:190;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;
+    transform:translateY(-100%);transition:transform 0.5s cubic-bezier(.16,.8,.3,1);
+  }
+  .mobile-menu.open{transform:translateY(0);}
+  .mobile-menu a{font-family:'Fraunces',serif;font-size:1.8rem;text-decoration:none;color:var(--forest);}
+
+  /* ============ HERO ============ */
+  #home{
+    position:relative;
+    padding:9rem 0 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 85% 10%, rgba(184,134,46,0.1), transparent 60%),
+      var(--forest);
+    color:var(--parchment);
+    overflow:hidden;
+  }
+  .hero-grain{
+    position:absolute;inset:0;opacity:0.04;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(250,247,240,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(250,247,240,0.5) 1px, transparent 1px);
+    background-size:48px 48px;
+  }
+
+  .hero-layout{
+    position:relative;z-index:1;
+    display:grid;grid-template-columns:1.05fr 0.95fr;gap:3rem;align-items:center;
+    padding-bottom:5rem;
+  }
+
+  .hero-title{
+    font-size:clamp(2.3rem,5vw,3.6rem);font-weight:500;line-height:1.12;letter-spacing:-1px;
+    opacity:0;animation:fadeUp 0.9s ease 0.3s forwards;
+  }
+  .hero-title em{font-style:italic;color:var(--bronze-bright);}
+  .hero-sub{
+    margin-top:1.4rem;max-width:480px;color:var(--tan);font-size:1rem;font-weight:300;
+    opacity:0;animation:fadeUp 0.9s ease 0.5s forwards;
+  }
+  .hero-pin{
+    margin-top:1rem;display:flex;align-items:center;gap:0.6rem;
+    font-size:0.84rem;color:var(--parchment-dim);opacity:0.85;
+    opacity:0;animation:fadeUp 0.9s ease 0.6s forwards;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+  .hero-actions{
+    margin-top:2.2rem;display:flex;gap:1rem;flex-wrap:wrap;
+    opacity:0;animation:fadeUp 0.9s ease 0.75s forwards;
+  }
+  .btn-bronze{
+    background:var(--bronze);color:var(--forest);
+    padding:0.95rem 2rem;text-decoration:none;border-radius:3px;
+    font-size:0.84rem;font-weight:700;letter-spacing:0.4px;
+    transition:background 0.3s, transform 0.3s;
+  }
+  .btn-bronze:hover{background:var(--bronze-bright);transform:translateY(-2px);}
+  .btn-line{
+    border:1px solid rgba(250,247,240,0.3);color:var(--parchment);
+    padding:0.95rem 2rem;text-decoration:none;border-radius:3px;
+    font-size:0.84rem;font-weight:600;letter-spacing:0.4px;
+    transition:all 0.3s;
+  }
+  .btn-line:hover{border-color:var(--parchment);background:rgba(250,247,240,0.06);}
+
+  /* hero seal card */
+  .hero-seal-card{
+    background:rgba(250,247,240,0.05);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(250,247,240,0.14);
+    border-radius:6px;padding:2.2rem;
+    opacity:0;animation:fadeUp 0.9s ease 0.9s forwards;
+  }
+  .hero-seal-row{display:flex;align-items:center;gap:1.1rem;margin-bottom:1.6rem;padding-bottom:1.6rem;border-bottom:1px solid rgba(250,247,240,0.12);}
+  .hero-seal-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+  .hero-seal-row .seal{width:48px;height:48px;}
+  .hero-seal-row .seal .seal-inner{font-size:0.56rem;}
+  .hero-seal-text .t{font-size:0.95rem;font-weight:600;color:var(--parchment);}
+  .hero-seal-text .d{font-size:0.78rem;color:var(--tan);margin-top:0.15rem;}
+
+  /* ============ TRUST STRIP ============ */
+  .trust-strip{
+    position:relative;z-index:1;
+    border-top:1px solid rgba(250,247,240,0.12);
+    display:grid;grid-template-columns:repeat(4,1fr);
+  }
+  .trust-strip .item{padding:1.5rem 2vw;text-align:center;border-right:1px solid rgba(250,247,240,0.1);}
+  .trust-strip .item:last-child{border-right:none;}
+  .trust-num{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--bronze-bright);}
+  .trust-label{font-size:0.68rem;color:var(--tan);letter-spacing:0.8px;text-transform:uppercase;margin-top:0.3rem;}
+
+  /* ============ SECTIONS ============ */
+  section{padding:6.5rem 0;}
+  .sec-head{margin-bottom:3rem;max-width:680px;}
+  .sec-title{font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:500;letter-spacing:-0.5px;margin-top:0.9rem;}
+  .sec-title em{font-style:italic;color:var(--bronze-dim);}
+  .sec-desc{margin-top:1rem;color:var(--brown);font-size:0.95rem;max-width:560px;}
+
+  /* ============ SERVICES ============ */
+  #services{background:var(--parchment);}
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;}
+  .svc-card{
+    background:#fff;border:1px solid var(--line);border-radius:6px;
+    padding:2.1rem 1.9rem;transition:transform 0.35s, box-shadow 0.35s, border-color 0.35s;
+  }
+  .svc-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(27,46,42,0.08);border-color:var(--bronze);}
+  .svc-icon{
+    width:46px;height:46px;border-radius:50%;background:var(--parchment-dim);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:1.2rem;margin-bottom:1.3rem;
+  }
+  .svc-card h3{font-size:1.18rem;font-weight:600;margin-bottom:0.6rem;color:var(--forest);}
+  .svc-card p{font-size:0.86rem;color:var(--brown);line-height:1.7;}
+
+  /* ============ PROCESS (real sequence) ============ */
+  #process{background:var(--forest-2);color:var(--parchment);position:relative;overflow:hidden;}
+  .process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+  .process-steps::before{
+    content:'';position:absolute;top:23px;left:0;right:0;height:1px;
+    background:repeating-linear-gradient(90deg, var(--bronze) 0 8px, transparent 8px 16px);
+    z-index:0;
+  }
+  .pstep{position:relative;z-index:1;padding-right:1.5rem;}
+  .pstep .pnum{
+    width:46px;height:46px;border-radius:50%;background:var(--forest-2);
+    border:1.5px solid var(--bronze);color:var(--bronze-bright);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;
+    margin-bottom:1.4rem;
+  }
+  .pstep h4{font-size:1.05rem;font-weight:600;margin-bottom:0.5rem;}
+  .pstep p{font-size:0.82rem;color:var(--tan);line-height:1.65;}
+
+  /* ============ LISTINGS ============ */
+  #listings{background:var(--parchment);}
+  .listings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+  .lcard{
+    background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;
+    transition:transform 0.4s, box-shadow 0.4s;
+  }
+  .lcard:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(27,46,42,0.1);}
+  .lcard-img{position:relative;aspect-ratio:4/3;overflow:hidden;}
+  .lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.7s;}
+  .lcard:hover .lcard-img img{transform:scale(1.06);}
+  .lcard-tag{
+    position:absolute;top:1rem;left:1rem;
+    background:var(--forest);color:var(--parchment);
+    font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:0.35rem 0.8rem;border-radius:3px;
+  }
+  .lcard-body{padding:1.5rem;}
+  .lcard-price{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--bronze-dim);}
+  .lcard-loc{font-size:0.88rem;color:var(--forest);margin-top:0.3rem;font-weight:600;}
+  .lcard-meta{font-size:0.78rem;color:var(--brown);margin-top:0.6rem;}
+
+  .listings-note{
+    margin-top:2.2rem;padding:1.3rem 1.6rem;background:var(--parchment-dim);
+    border-left:3px solid var(--bronze);border-radius:3px;
+    font-size:0.86rem;color:var(--brown);
+  }
+
+  /* ============ WHY US ============ */
+  #why{background:var(--parchment);}
+  .why-layout{display:grid;grid-template-columns:0.9fr 1.1fr;gap:3.5rem;align-items:center;}
+  .why-img{border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+  .why-list{display:flex;flex-direction:column;gap:1.5rem;}
+  .why-item{display:flex;gap:1.1rem;align-items:flex-start;}
+  .why-item .seal{width:44px;height:44px;}
+  .why-item .seal .seal-inner{font-size:0.5rem;}
+  .why-item h4{font-size:1.05rem;font-weight:600;margin-bottom:0.35rem;color:var(--forest);}
+  .why-item p{font-size:0.85rem;color:var(--brown);}
+
+  /* ============ TESTIMONIALS ============ */
+  #testimonials{background:var(--forest-3);color:var(--parchment);}
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;}
+  .tcard{
+    background:rgba(250,247,240,0.05);border:1px solid rgba(250,247,240,0.14);
+    border-radius:6px;padding:2rem;
+  }
+  .tcard .stars{color:var(--bronze-bright);font-size:0.85rem;letter-spacing:2px;margin-bottom:1.1rem;}
+  .tcard p{font-family:'Fraunces',serif;font-style:italic;font-size:1.05rem;line-height:1.6;color:var(--parchment);margin-bottom:1.3rem;}
+  .tcard .who{font-size:0.82rem;color:var(--tan);padding-top:1.1rem;border-top:1px solid rgba(250,247,240,0.12);}
+  .tcard .who b{color:var(--parchment);}
+
+  /* ============ CONTACT ============ */
+  #contact{background:var(--parchment);}
+  .contact-layout{
+    display:grid;grid-template-columns:1fr 1.1fr;gap:0;
+    border:1px solid var(--line);border-radius:6px;overflow:hidden;
+  }
+  .contact-info{background:var(--forest);color:var(--parchment);padding:3rem;}
+  .contact-info h3{font-size:1.8rem;margin-bottom:1rem;}
+  .contact-info > p{color:var(--tan);font-size:0.9rem;margin-bottom:2.2rem;max-width:340px;}
+
+  .agent-card{
+    display:flex;gap:1rem;align-items:center;
+    background:rgba(250,247,240,0.06);border:1px solid rgba(250,247,240,0.14);
+    border-radius:6px;padding:1.3rem;margin-bottom:2.2rem;
+  }
+  .agent-avatar{
+    width:54px;height:54px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--bronze-dim),var(--bronze-bright));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-size:1.3rem;color:var(--forest);font-weight:600;
+  }
+  .agent-name{font-size:0.98rem;font-weight:600;}
+  .agent-title{font-size:0.74rem;color:var(--bronze-bright);margin-top:0.15rem;}
+
+  .cdetail{display:flex;gap:0.9rem;align-items:flex-start;margin-bottom:1.4rem;}
+  .cdetail .ic{
+    width:36px;height:36px;border:1px solid var(--bronze);border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;color:var(--bronze-bright);font-size:0.92rem;
+  }
+  .cdetail .label{font-size:0.66rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--tan);}
+  .cdetail .val{font-size:0.9rem;margin-top:0.2rem;}
+  .cdetail a{text-decoration:none;}
+  .cdetail a:hover{color:var(--bronze-bright);}
+
+  .contact-form{background:#fff;padding:3rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .field{margin-bottom:1.2rem;}
+  .field label{display:block;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--brown);margin-bottom:0.5rem;}
+  .field input,.field select,.field textarea{
+    width:100%;background:var(--parchment-dim);border:1px solid var(--line);border-radius:4px;
+    color:var(--ink);font-family:'Inter';font-size:0.9rem;padding:0.75rem 0.9rem;
+    outline:none;transition:border-color 0.3s, background 0.3s;
+  }
+  .field input::placeholder,.field textarea::placeholder{color:var(--brown-dim);}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--bronze);background:#fff;}
+  .field textarea{resize:vertical;min-height:80px;}
+
+  .submit-btn{
+    width:100%;background:var(--bronze);color:var(--forest);border:none;border-radius:4px;
+    padding:1.05rem;font-family:'Inter';font-size:0.84rem;font-weight:700;letter-spacing:0.5px;
+    cursor:pointer;margin-top:0.5rem;transition:background 0.3s;
+  }
+  .submit-btn:hover{background:var(--bronze-bright);}
+  .error-text{color:#B3473C;font-size:0.74rem;margin-top:0.4rem;display:none;}
+  .form-success{
+    display:none;margin-top:1rem;padding:1rem;border:1px solid var(--bronze);
+    border-radius:4px;color:var(--bronze-dim);font-size:0.85rem;text-align:center;background:var(--parchment-dim);
+  }
+
+  /* ============ FOOTER ============ */
+  footer{background:var(--forest);color:var(--tan);padding:3.5rem 0 2rem;}
+  .footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:3rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(250,247,240,0.12);}
+  .footer-brand p{font-size:0.85rem;margin-top:1rem;max-width:300px;line-height:1.7;}
+  .footer-col h5{font-size:0.7rem;letter-spacing:1.3px;text-transform:uppercase;color:var(--bronze-bright);margin-bottom:1.1rem;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.7rem;}
+  .footer-col a{text-decoration:none;font-size:0.85rem;color:var(--tan);transition:color 0.25s;}
+  .footer-col a:hover{color:var(--parchment);}
+  .footer-bottom{padding-top:1.8rem;font-size:0.76rem;color:rgba(250,247,240,0.5);text-align:center;}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:980px){
+    .nav-links,.nav-cta{display:none;}
+    .hamburger{display:flex;}
+    .hero-layout{grid-template-columns:1fr;gap:2.5rem;}
+    .trust-strip{grid-template-columns:repeat(2,1fr);}
+    .trust-strip .item:nth-child(2){border-right:none;}
+    .services-grid{grid-template-columns:repeat(2,1fr);}
+    .process-steps{grid-template-columns:repeat(2,1fr);gap:2rem;}
+    .process-steps::before{display:none;}
+    .listings-grid{grid-template-columns:repeat(2,1fr);}
+    .why-layout{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .contact-layout{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:2rem;}
+  }
+  @media (max-width:640px){
+    .services-grid{grid-template-columns:1fr;}
+    .process-steps{grid-template-columns:1fr;}
+    .listings-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;gap:2rem;}
+    .trust-strip{grid-template-columns:1fr 1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#home" class="brand">
+    <div class="brand-mark">SDG</div>
+    <div class="brand-text">
+      <span class="name">S. De Guzman</span>
+      <span class="tag">Documentation &amp; Land Titling</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#listings">Listings</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get a Free Consultation</a>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="toggleMenu()">Services</a>
+  <a href="#process" onclick="toggleMenu()">Process</a>
+  <a href="#listings" onclick="toggleMenu()">Listings</a>
+  <a href="#why" onclick="toggleMenu()">Why Us</a>
+  <a href="#contact" onclick="toggleMenu()" style="color:var(--bronze-dim);">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-grain"></div>
+  <div class="wrap">
+    <div class="hero-layout">
+      <div>
+        <p class="eyebrow on-dark">PRC-Accredited Real Estate Documentation</p>
+        <h1 class="hero-title">Land titling and property documentation, <em>done right.</em></h1>
+        <p class="hero-sub">We help Filipino and foreign property owners secure clear, accurate titles — from first verification to final registration. Walang gulo, walang sablay — tama sa unang subok.</p>
+        <p class="hero-pin">📍 Brgy. Poblacion 1, Agdangan, Quezon Province, Philippines</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-bronze">Request a Free Consultation</a>
+          <a href="#services" class="btn-line">See Our Services</a>
+        </div>
+      </div>
+
+      <div class="hero-seal-card">
+        <div class="hero-seal-row">
+          <div class="seal"><span class="seal-inner">PRC<br>Licensed</span></div>
+          <div class="hero-seal-text">
+            <div class="t">PRC-Accredited Salesperson</div>
+            <div class="d">Shirley Fe De Guzman, licensed real estate professional</div>
+          </div>
+        </div>
+        <div class="hero-seal-row">
+          <div class="seal"><span class="seal-inner">Local &amp;<br>Foreign</span></div>
+          <div class="hero-seal-text">
+            <div class="t">Serving local & overseas clients</div>
+            <div class="d">OFWs and foreign buyers welcome, remote assistance available</div>
+          </div>
+        </div>
+        <div class="hero-seal-row">
+          <div class="seal"><span class="seal-inner">Direct<br>Access</span></div>
+          <div class="hero-seal-text">
+            <div class="t">Work directly with your agent</div>
+            <div class="d">No middlemen — every transaction handled personally</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="trust-strip">
+    <div class="item"><div class="trust-num">PRC</div><div class="trust-label">Accredited Salesperson</div></div>
+    <div class="item"><div class="trust-num">Quezon</div><div class="trust-label">Province Coverage</div></div>
+    <div class="item"><div class="trust-num">100%</div><div class="trust-label">Personally Handled</div></div>
+    <div class="item"><div class="trust-num">Local +</div><div class="trust-label">International Clients</div></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Our Services</p>
+      <h2 class="sec-title">Complete documentation support, <em>start to finish.</em></h2>
+      <p class="sec-desc">Whether you're titling a family lot or closing a property sale, we guide every step so nothing gets delayed at the registry.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="svc-card reveal">
+        <div class="svc-icon">📜</div>
+        <h3>Land Titling Assistance</h3>
+        <p>Guidance through the full titling process, from initial requirements to issuance of your official certificate.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">🏛️</div>
+        <h3>Land Title Registration</h3>
+        <p>Proper registration of land titles with the Registry of Deeds, handled accurately to avoid future disputes.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">🔄</div>
+        <h3>Transfer of Title</h3>
+        <p>Smooth transfer of ownership between buyer and seller, or among heirs, with all supporting documents in order.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">📍</div>
+        <h3>Verification of Property Location</h3>
+        <p>On-the-ground and records-based verification so you know exactly what you're buying — boundaries, status, and all.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">🔓</div>
+        <h3>Cancellation of Mortgages</h3>
+        <p>Assistance in clearing paid-off mortgages from your title, so your property is fully free and unencumbered.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">🧾</div>
+        <h3>BIR Certificate Authorizing Registration (CAR)</h3>
+        <p>Processing of your CAR with the Bureau of Internal Revenue — a required step before any title transfer.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">🤝</div>
+        <h3>Buying &amp; Selling Assistance</h3>
+        <p>Full support in buying or selling property — from listing and negotiation to paperwork and closing.</p>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon">✈️</div>
+        <h3>Remote Support for OFWs &amp; Foreign Buyers</h3>
+        <p>Based overseas? We coordinate documentation on your behalf so you don't need to fly home for every step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow on-dark">How It Works</p>
+      <h2 class="sec-title" style="color:var(--parchment);">A clear path from <em>inquiry to title.</em></h2>
+      <p class="sec-desc" style="color:var(--tan);">Land titling has a defined legal sequence — here's how we move through it together.</p>
+    </div>
+
+    <div class="process-steps">
+      <div class="pstep reveal">
+        <div class="pnum">1</div>
+        <h4>Consultation &amp; Verification</h4>
+        <p>We review your property and documents, and verify the land's status and location.</p>
+      </div>
+      <div class="pstep reveal">
+        <div class="pnum">2</div>
+        <h4>Document Preparation</h4>
+        <p>We gather and prepare all required paperwork, including BIR clearances where needed.</p>
+      </div>
+      <div class="pstep reveal">
+        <div class="pnum">3</div>
+        <h4>Filing &amp; Registration</h4>
+        <p>We file with the relevant offices — BIR, Registry of Deeds, and local assessor — on your behalf.</p>
+      </div>
+      <div class="pstep reveal">
+        <div class="pnum">4</div>
+        <h4>Title Release</h4>
+        <p>We track the process through to completion and hand you your finalized, registered title.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section id="listings">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Property Listings</p>
+      <h2 class="sec-title">Properties available <em>in Agdangan &amp; nearby Quezon towns.</em></h2>
+      <p class="sec-desc">Every listing below comes with documentation already reviewed by our team — fewer surprises for buyers.</p>
+    </div>
+
+    <div class="listings-grid">
+      <div class="lcard reveal">
+        <div class="lcard-img">
+          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop" alt="Residential lot with trees" />
+          <span class="lcard-tag">Residential Lot</span>
+        </div>
+        <div class="lcard-body">
+          <div class="lcard-price">₱1,250,000</div>
+          <div class="lcard-loc">Brgy. Poblacion 1, Agdangan</div>
+          <div class="lcard-meta">450 sqm · Clean title · Road access</div>
+        </div>
+      </div>
+
+      <div class="lcard reveal">
+        <div class="lcard-img">
+          <img src="https://images.unsplash.com/photo-1500076656116-558758c991c1?q=80&w=800&auto=format&fit=crop" alt="Farm land" />
+          <span class="lcard-tag">Agricultural Lot</span>
+        </div>
+        <div class="lcard-body">
+          <div class="lcard-price">₱2,800,000</div>
+          <div class="lcard-loc">San Antonio, Agdangan, Quezon</div>
+          <div class="lcard-meta">1.2 hectares · Titled · Irrigated</div>
+        </div>
+      </div>
+
+      <div class="lcard reveal">
+        <div class="lcard-img">
+          <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=800&auto=format&fit=crop" alt="Family house" />
+          <span class="lcard-tag">House &amp; Lot</span>
+        </div>
+        <div class="lcard-body">
+          <div class="lcard-price">₱3,950,000</div>
+          <div class="lcard-loc">Poblacion, Agdangan, Quezon</div>
+          <div class="lcard-meta">3 BR · 2 BA · 220 sqm lot · Title ready</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="listings-note reveal">
+      Looking for a property not listed here, or want to sell yours? Reach out — we work with sellers and buyers across Quezon Province, including coordination for clients based abroad.
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="wrap">
+    <div class="why-layout">
+      <div class="why-img reveal">
+        <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=900&auto=format&fit=crop" alt="Documents and signing" />
+      </div>
+      <div>
+        <p class="eyebrow">Why Work With Us</p>
+        <h2 class="sec-title">Trusted locally, <em>accessible globally.</em></h2>
+        <div class="why-list" style="margin-top:2rem;">
+          <div class="why-item reveal">
+            <div class="seal"><span class="seal-inner">PRC</span></div>
+            <div>
+              <h4>Licensed &amp; accountable</h4>
+              <p>Work with a PRC-accredited real estate salesperson — not an unlicensed fixer.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <div class="seal"><span class="seal-inner">Direct</span></div>
+            <div>
+              <h4>Personal, hands-on service</h4>
+              <p>Shirley Fe De Guzman personally handles your documents — no passing between agents.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <div class="seal"><span class="seal-inner">Local</span></div>
+            <div>
+              <h4>Deep local knowledge</h4>
+              <p>Based in Agdangan, Quezon — familiar with local offices, processes, and property history.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <div class="seal"><span class="seal-inner">OFW</span></div>
+            <div>
+              <h4>Built for overseas clients</h4>
+              <p>Remote document handling and updates for OFWs and foreign buyers, wherever you are.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow on-dark">Client Experience</p>
+      <h2 class="sec-title" style="color:var(--parchment);">What our clients <em>say.</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="tcard reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Naayos ang title ng lupa ng pamilya namin na matagal nang naka-pending. Mabilis at malinaw ang proseso."</p>
+        <div class="who"><b>Edna R.</b> — Agdangan, Quezon</div>
+      </div>
+      <div class="tcard reveal">
+        <div class="stars">★★★★★</div>
+        <p>"As an OFW, I couldn't fly home for every step. Shirley handled everything and kept me updated the whole time."</p>
+        <div class="who"><b>Mark P.</b> — OFW, based in Dubai</div>
+      </div>
+      <div class="tcard reveal">
+        <div class="stars">★★★★★</div>
+        <p>"We verified a lot before buying and found an issue with the boundary early. Saved us from a costly mistake."</p>
+        <div class="who"><b>Liza &amp; Tom H.</b> — Foreign buyers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Get In Touch</p>
+      <h2 class="sec-title">Let's sort out your <em>documents — tama sa unang subok.</em></h2>
+    </div>
+
+    <div class="contact-layout reveal">
+      <div class="contact-info">
+        <div class="agent-card">
+          <div class="agent-avatar">SD</div>
+          <div>
+            <div class="agent-name">Shirley Fe De Guzman</div>
+            <div class="agent-title">PRC-Accredited Real Estate Salesperson</div>
+          </div>
+        </div>
+
+        <h3>We'll respond within 24 hours.</h3>
+        <p>Tell us about your property or documentation concern and we'll get back to you with next steps.</p>
+
+        <div class="cdetail">
+          <div class="ic">☎</div>
+          <div><div class="label">Phone</div><div class="val"><a href="tel:+639638413085">0963-841-3085</a></div></div>
+        </div>
+        <div class="cdetail">
+          <div class="ic">✉</div>
+          <div><div class="label">Email</div><div class="val"><a href="mailto:shirleyfe28@gmail.com">shirleyfe28@gmail.com</a></div></div>
+        </div>
+        <div class="cdetail">
+          <div class="ic">⌂</div>
+          <div><div class="label">Visit Us</div><div class="val">Brgy. Poblacion 1, Agdangan, Quezon Province, Philippines</div></div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="field">
+            <label for="fname">Full Name</label>
+            <input type="text" id="fname" placeholder="Your name" />
+            <div class="error-text" id="err-fname">Please enter your name.</div>
+          </div>
+          <div class="field">
+            <label for="femail">Email Address</label>
+            <input type="email" id="femail" placeholder="you@email.com" />
+            <div class="error-text" id="err-femail">Please enter a valid email.</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="fphone">Phone / Viber / WhatsApp</label>
+            <input type="tel" id="fphone" placeholder="+63 9XX XXX XXXX" />
+          </div>
+          <div class="field">
+            <label for="finterest">I need help with</label>
+            <select id="finterest">
+              <option value="">Select an option</option>
+              <option>Land Titling</option>
+              <option>Title Transfer</option>
+              <option>Property Verification</option>
+              <option>Buying a Property</option>
+              <option>Selling a Property</option>
+              <option>Other Documentation</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fmsg">Message</label>
+          <textarea id="fmsg" placeholder="Tell us about your property or concern..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitLead()">Send Inquiry</button>
+        <div class="form-success" id="formSuccess">Salamat po! Your inquiry has been received — we'll contact you within 24 hours.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-mark">SDG</div>
+          <div class="brand-text">
+            <span class="name" style="color:var(--parchment);">S. De Guzman</span>
+            <span class="tag" style="color:var(--bronze-bright);">Documentation &amp; Land Titling</span>
+          </div>
+        </div>
+        <p>Page · Estate Agent · Property. Helping individuals, families, and businesses with land titling and real estate documentation across Quezon Province.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#process">Our Process</a></li>
+          <li><a href="#listings">Listings</a></li>
+          <li><a href="#why">Why Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:+639638413085">0963-841-3085</a></li>
+          <li><a href="mailto:shirleyfe28@gmail.com">shirleyfe28@gmail.com</a></li>
+          <li><a href="#contact">Brgy. Poblacion 1, Agdangan, Quezon</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 S. De Guzman Documentation and Land Titling Services. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(){
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  function submitLead(){
+    const name = document.getElementById('fname');
+    const email = document.getElementById('femail');
+    let valid = true;
+
+    document.getElementById('err-fname').style.display = 'none';
+    document.getElementById('err-femail').style.display = 'none';
+
+    if (!name.value.trim()){
+      document.getElementById('err-fname').style.display = 'block';
+      valid = false;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value.trim())){
+      document.getElementById('err-femail').style.display = 'block';
+      valid = false;
+    }
+    if (!valid) return;
+
+    document.getElementById('formSuccess').style.display = 'block';
+    ['fname','femail','fphone','fmsg'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('finterest').value = '';
+
+    setTimeout(() => {
+      document.getElementById('formSuccess').style.display = 'none';
+    }, 6000);
+  }
+</script>
+
+</body>
+</html>
